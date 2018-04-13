@@ -56,7 +56,8 @@ LMB_2018_pit_UP <- rbind(g1.p,g2.p,g3.p,g4.p,g5.p,g6.p,g7.p,g8.p)
 LMB_2018_bat <- LMB_2018_bat %>%
   rbind(., LMB_2018_bat_UP) %>%
   group_by(Batter_Name) %>%
-  summarise(AB = sum(AB), 
+  summarise(TEAM = unique(TEAM),
+            AB = sum(AB), 
             R = sum(R), 
             H = sum(H),
             D = sum(D),
@@ -73,7 +74,8 @@ LMB_2018_bat <- LMB_2018_bat %>%
 LMB_2018_pit <- LMB_2018_pit %>%
   rbind(.,LMB_2018_pit_UP) %>%
   group_by(Pitcher_Name) %>%
-  summarise(OUT = sum(OUT),
+  summarise(TEAM = unique(TEAM),
+            OUT = sum(OUT),
             H = sum(H),
             HR = sum(HR),
             ER = sum(ER),

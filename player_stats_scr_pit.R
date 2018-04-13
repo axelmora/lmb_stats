@@ -10,6 +10,29 @@ name_p <- function(x){
   val <- trimws(xml_text(a))
   return(toupper(val))
 }
+#team
+tcp <- function(x){
+  #a <- xml_find_all(x, "/boxscore/team/pitching")
+  #b <- xml_find_all(x,"/boxscore/team")
+  #z <- xml_attr(b,"team_code")
+  #ta <- xml_find_all(a[1],"pitcher")
+  #th <- xml_find_all(a[2],"pitcher")
+  #xml_set_attr(ta,"name",z[1])
+  #xml_set_attr(th,"name",z[2])
+  #t <- xml_find_all(x,"/boxscore/team/batting/pitcher/@name")
+  #val <- trimws(xml_text(t))
+  #return(toupper(val))
+  y <- xml_find_all(x, "/boxscore/team/pitching")
+  a <- xml_find_all(y[1],"pitcher")
+  h <- xml_find_all(y[2],"pitcher")
+  ta <- xml_attrs(xml_child(x, 3))[["team_code"]]
+  th <- xml_attrs(xml_child(x, 4))[["team_code"]]
+  xml_set_attr(a,"name",ta)
+  xml_set_attr(h,"name",th)
+  t <- xml_find_all(x,"/boxscore/team/pitching/pitcher/@name")
+  val <- trimws(xml_text(t))
+  return(toupper(val))
+}
 #OUT
 out <- function(x){
   a <- xml_find_all(x, "/boxscore/team/pitching/pitcher/@out")
@@ -151,6 +174,7 @@ sv <- function(x){
 py_st_pt <- function(x){
   
   pitcher <- data.frame(Pitcher_Name = name_p(x),
+                     #TEAM = tcp(x),
                      OUT = out(x),
                      H = hp(x),
                      HR = hrp(x),
@@ -163,6 +187,27 @@ py_st_pt <- function(x){
                      L = l(x),
                      HLD = hd(x),
                      SV = sv(x)
+  )
+  return(pitcher)
+}
+
+##TEAM STATS
+tm_st_pt <- function(x){
+  
+  pitcher <- data.frame(
+                        TEAM = tcp(x),
+                        OUT = out(x),
+                        H = hp(x),
+                        HR = hrp(x),
+                        R = rp(x),
+                        ER = er(x),
+                        SO = sop(x),
+                        BB = bbp(x),
+                        BK = bk(x),
+                        W = w(x),
+                        L = l(x),
+                        HLD = hd(x),
+                        SV = sv(x)
   )
   return(pitcher)
 }
