@@ -97,22 +97,30 @@ server <- function(input, output) {
     
     LMB2018 = read.csv("LMB2018.csv")
     LMB2018 <- LMB2018[2:16]
-
+    LMB2018.u <- gs_url("https://docs.google.com/spreadsheets/d/1cIl8Bf6EPkt5SHYUIvH71AuVXcvccmpGgJSfg7-yZqI",
+                      lookup = NULL, visibility = NULL, verbose = TRUE)
     game <- list()
     for(i in 1:n){
       game[[i]] <- bs(read_xml(as.character(res[[i]])))
       print(game[[i]])
       LMB2018 <- rbind(LMB2018, game[[i]])
-      write.csv(LMB2018, file="LMB2018.csv")
     }
-    print(LMB2018)
+    write.csv(LMB2018, file="LMB2018.csv")
+    gs_edit_cells(LMB2018.u,  input=colnames(LMB2018), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018.u,  input = LMB2018, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("LMB2018 actualizado con exito")
+    
+    LMBatt_time.u <- gs_url("https://docs.google.com/spreadsheets/d/1ydh9_pmyQ_zBCnr_OeG-XgtO_PM8BB4S5bPijsLHrmU",
+                          lookup = NULL, visibility = NULL, verbose = TRUE)
     
     att_time <- LMB2018 %>%
           group_by(DATE) %>%
           summarise(TIME = mean(TIME, na.rm=TRUE),
                     ATT = mean(ATT, na.rm=TRUE))
     write.csv(att_time, file="LMBatt_time.csv")
-    print(att_time)
+    gs_edit_cells(LMBatt_time.u,  input=colnames(att_time), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMBatt_time.u,  input = att_time, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("att_time actualizad con exito")
     
     LMB2018$HOME <- tolower(LMB2018$HOME) 
     LMB2018$AWAY <- tolower(LMB2018$AWAY)
@@ -177,9 +185,12 @@ server <- function(input, output) {
     
     lmbts <- cbind(vaqx[1],vaqx[5],tijx[5],larx[5],mxox[5],mtyx[5],mvax[5],yucx[5],
                    quix[5],agux[5],durx[5],leox[5],oaxx[5],sltx[5],puex[5],tabx[5],camx[5])
-    
+    LMBts.u <- gs_url("https://docs.google.com/spreadsheets/d/1ZJiSAhYKqSDwAylfLKtgI0Uve58GF6OQyhWzxMXP0Dw",
+                    lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(lmbts, file="LMBts.csv")
-    print(lmbts)
+    gs_edit_cells(LMBts.u,  input=colnames(lmbts), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMBts.u,  input = lmbts, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("lmbts actualizado con exito")
     
     for(i in teams){
       
@@ -296,10 +307,24 @@ server <- function(input, output) {
                              'vaq' = 'Algodoneros Union Laguna',
                              'agu' = 'Rieleros de Aguascalientes')
     
+    LMB2018_stan.u <- gs_url("https://docs.google.com/spreadsheets/d/1JjyVQTiqv4Q0UASdErzyG2Rz-df6tRgpmLv4Ds4ZVXw",
+                           lookup = NULL, visibility = NULL, verbose = TRUE)
+    LMB2018_stan_N.u <- gs_url("https://docs.google.com/spreadsheets/d/1qern2Nw_Y69tfzrhwsYUkeYsulONQA3sfAad5HFQ3eg",
+                             lookup = NULL, visibility = NULL, verbose = TRUE)
+    LMB2018_stan_S.u <- gs_url("https://docs.google.com/spreadsheets/d/1_KVyXeNdEUFhsgPqjG2fLKWmPaqpywDamw9QupcvT_A",
+                             lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(lmbstan, file="LMB2018_stan.csv")
+    gs_edit_cells(LMB2018_stan.u,  input=colnames(lmbstan), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_stan.u,  input = lmbstan, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("lmb2018_stan actualizado con exito")
     write.csv(lmbstan_S, file="LMB2018_stan_S.csv")
+    gs_edit_cells(LMB2018_stan_N.u,  input=colnames(lmbstan_S), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_stan_N.u,  input = lmbstan_S, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("lmb2018_stan_N actualizado con exito")
     write.csv(lmbstan_N, file="LMB2018_stan_N.csv")
-    
+    gs_edit_cells(LMB2018_stan_S.u,  input=colnames(lmbstan_N), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_stan_S.u,  input = lmbstan_N, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("lmb2018_stan_S actualizado con exito")
   })
   
   observeEvent(input$bat, {
@@ -317,11 +342,9 @@ server <- function(input, output) {
     }
 
     LMB2018_bat_UP <- do.call(rbind,bats)
-    print(LMB2018_bat_UP)
     LMB2018_bat = read.csv("LMB2018_bat.csv")
     LMB2018_bat <- LMB2018_bat[2:15]
-    print(LMB2018_bat)
-    
+
     LMB2018_bat <- LMB2018_bat %>%
       rbind(., LMB2018_bat_UP) %>%
       group_by(Batter_Name) %>%
@@ -339,7 +362,12 @@ server <- function(input, output) {
                 SF = sum(SF),
                 SH = sum(SH))
     
+    LMB2018_bat.u <- gs_url("https://docs.google.com/spreadsheets/d/1e0__h-Y-oVVQGEZuDVVsJ2t5QY7he7mX2yNYmsQ1XCw",
+                          lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(LMB2018_bat, file="LMB2018_bat.csv")
+    gs_edit_cells(LMB2018_bat.u,  input=colnames(LMB2018_bat), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_bat.u,  input = LMB2018_bat, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("lmb2018_bat actualizado con exito")
     
     bat_bas <- mutate(LMB2018_bat,
                       PA = AB+BB+SF+SH)
@@ -353,9 +381,12 @@ server <- function(input, output) {
                       SLG = round((((1*H)+(2*D)+(3*Tr)+(4*HR))/AB),3),
                       OPS = round((OBP+SLG),3))
     
+    LMB2018_bat_bas.u <- gs_url("https://docs.google.com/spreadsheets/d/1_KDrv4koh6syrHusd0QkxsWdMm1XN_9sgrv45KWL0Mc",
+                              lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(bat_bas, file="LMB2018_bat_bas.csv")
-    print("Estadisticas de bateo completo")
-    
+    gs_edit_cells(LMB2018_bat_bas.u,  input=colnames(bat_bas), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_bat_bas.u,  input = bat_bas, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("lmb2018_bat_bas actualizado con exito")
   })
   
   observeEvent(input$pit, {
@@ -393,7 +424,12 @@ server <- function(input, output) {
                 HLD = sum(HLD),
                 SV = sum(SV))
     
+    LMB2018_pit.u <- gs_url("https://docs.google.com/spreadsheets/d/1LosABdBeqPKWJr5FW_XsgZRFw9DnUpakxtGgY77PArs",
+                            lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(LMB2018_pit, file="LMB2018_pit.csv")
+    gs_edit_cells(LMB2018_pit.u,  input=colnames(LMB2018_pit), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_pit.u,  input = LMB2018_pit, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("LMB2018_pit actualizado con exito")
     
     pit_bas <- select(LMB2018_pit, Pitcher_Name, H:SV)
     
@@ -403,8 +439,12 @@ server <- function(input, output) {
                       ERA = round(9*(ER/(LMB2018_pit$OUT/3)),2),
                       WHIP = round((BB+H)/(LMB2018_pit$OUT/3),2))
     
+    LMB2018_pit_bas.u <- gs_url("https://docs.google.com/spreadsheets/d/1piAa-Tb0DCri_h6H8YmwQJXgXh2DVoS9_inPpTMfMTw",
+                              lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(pit_bas, file="LMB2018_pit_bas.csv")
-    print(pit_bas)
+    gs_edit_cells(LMB2018_pit_bas.u,  input=colnames(pit_bas), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_pit_bas.u,  input = pit_bas, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("LMB2018_pit_bas actualizado con exito")
     
     pit_sab <- select(pit_bas, Pitcher_Name, SO:BB,IP:WHIP)
     
@@ -412,9 +452,12 @@ server <- function(input, output) {
                       'BB/9' = round(9*(BB/LMB2018_pit$OUT/3),2),
                       'K/9' = round(9*(SO/LMB2018_pit$OUT/3),2))
     
+    LMB2018_pit_sab.u <- gs_url("https://docs.google.com/spreadsheets/d/1Dt85G7IDDtpkBzFPoHWyQKfIDJqVM4be8NhsZXx2ZwM",
+                              lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(pit_sab, file="LMB2018_pit_sab.csv")
-    print("Estadisticas de pitcheo completo")
-    
+    gs_edit_cells(LMB2018_pit_sab.u,  input=colnames(pit_sab), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_pit_sab.u,  input = pit_sab, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("LMB2018_pit_sab actualizado con exito")
   })  
   
   observeEvent(input$tb, {
@@ -432,10 +475,8 @@ server <- function(input, output) {
     }
     
     LMB2018_TM_bat_UP <- do.call(rbind,bats)
-    print(LMB2018_TM_bat_UP)
     LMB2018_TM_bat = read.csv("LMB2018_TM_bat.csv")
     LMB2018_TM_bat <- LMB2018_TM_bat[2:15]
-    print(LMB2018_TM_bat)
     
     LMB2018_TM_bat <- LMB2018_TM_bat %>%
       rbind(., LMB2018_TM_bat_UP) %>%
@@ -454,7 +495,12 @@ server <- function(input, output) {
                 SF = sum(SF),
                 SH = sum(SH))
     
+    LMB2018_TM_bat.u <- gs_url("https://docs.google.com/spreadsheets/d/1ELbxQG-N7xDAtu4FR6DV0z5GvjBn4yTepfbWFRPbGRU",
+                             lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(LMB2018_TM_bat, file="LMB2018_TM_bat.csv")
+    gs_edit_cells(LMB2018_TM_bat.u,  input=colnames(LMB2018_TM_bat), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_TM_bat.u,  input = LMB2018_TM_bat, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("LMB2018_TM_bat actualizado con exito")
     
     TM_bat_bas <- mutate(LMB2018_TM_bat,
                       PA = AB+BB+SF+SH)
@@ -468,9 +514,12 @@ server <- function(input, output) {
                       SLG = round((((1*H)+(2*D)+(3*Tr)+(4*HR))/AB),3),
                       OPS = round((OBP+SLG),3))
     
+    LMB2018_TM_bat_bas.u <- gs_url("https://docs.google.com/spreadsheets/d/1qxGJReA4GVEPcgErrmpc-bn73ZpIrVD9e78kYp_rBps",
+                                 lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(TM_bat_bas, file="LMB2018_TM_bat_bas.csv")
-    print("Estadisticas de bateo completo")
-    
+    gs_edit_cells(LMB2018_TM_bat_bas.u,  input=colnames(TM_bat_bas), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_TM_bat_bas.u,  input = TM_bat_bas, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("LMB2018_TM_bat_bas actualizado con exito")
   })
   
   observeEvent(input$tp, {
@@ -508,7 +557,12 @@ server <- function(input, output) {
                 HLD = sum(HLD),
                 SV = sum(SV))
     
+    LMB2018_TM_pit.u <- gs_url("https://docs.google.com/spreadsheets/d/13yO74OEDsNkWAWuD0wwKlXejRNSfouDf_-l8KIaG-uU",
+                             lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(LMB2018_TM_pit, file="LMB2018_TM_pit.csv")
+    gs_edit_cells(LMB2018_TM_pit.u,  input=colnames(LMB2018_TM_pit), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_TM_pit.u,  input = LMB2018_TM_pit, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("LMB2018_TM_pit actualizado con exito")
     
     TM_pit_bas <- select(LMB2018_TM_pit, TEAM, H:SV)
     
@@ -518,8 +572,12 @@ server <- function(input, output) {
                       ERA = round(9*(ER/(LMB2018_TM_pit$OUT/3)),2),
                       WHIP = round((BB+H)/(LMB2018_TM_pit$OUT/3),2))
     
+    LMB2018_TM_pit_bas.u <- gs_url("https://docs.google.com/spreadsheets/d/1RZeK52Ic-RAgGdsvR-n3l7AhbzyW0BBlh81I-GGQe-k",
+                                 lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(TM_pit_bas, file="LMB2018_TM_pit_bas.csv")
-    print(TM_pit_bas)
+    gs_edit_cells(LMB2018_TM_pit_bas.u,  input=colnames(TM_pit_bas), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_TM_pit_bas.u,  input = TM_pit_bas, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("LMB2018_TM_pit_bas actualizado con exito")
     
     TM_pit_sab <- select(TM_pit_bas, TEAM, SO:BB,IP:WHIP)
     
@@ -527,9 +585,12 @@ server <- function(input, output) {
                       'BB/9' = round(9*(BB/LMB2018_TM_pit$OUT/3),2),
                       'K/9' = round(9*(SO/LMB2018_TM_pit$OUT/3),2))
     
+    LMB2018_TM_pit_sab.u <- gs_url("https://docs.google.com/spreadsheets/d/1u7k_yTyDVEqBHjioAdo-jzWUDUKrkPRCBVd99BKN7pE",
+                                 lookup = NULL, visibility = NULL, verbose = TRUE)
     write.csv(TM_pit_sab, file="LMB2018_TM_pit_sab.csv")
-    print("Estadisticas de pitcheo completo")
-    
+    gs_edit_cells(LMB2018_TM_pit_sab.u,  input=colnames(TM_pit_sab), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMB2018_TM_pit_sab.u,  input = TM_pit_sab, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("LMB2018_TM_pit_sab actualizado con exito")
   })  
 }
 
