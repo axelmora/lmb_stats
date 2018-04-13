@@ -5,6 +5,7 @@ library(xml2)
 library(chron)
 library(DT)
 library(tidyverse)
+library(googledrive)
 
 ui <- dashboardPage(
   dashboardHeader(title = "Basic dashboard"),
@@ -22,21 +23,17 @@ ui <- dashboardPage(
                 box(
                   title = "Controls",
                   width = 3,
-                  selectInput("ngames", "Number of games", c(1:16)),
                   dateInput("date", "Date", value = "2018-03-22"),
                   actionButton("do","Get XMLs"),
                   actionButton("games","Games"),
-                  actionButton("bat","Bat Stats"),
-                  actionButton("pit", "Pit Stats")
+                  actionButton("bat","Players Bat Stats"),
+                  actionButton("pit", "Players Pit Stats"),
+                  actionButton("tb","Team Bat Stats"),
+                  actionButton("tp", "Team Pit Stats")
                 ),
                 box(
-                  title = "Games",
+                  title = "Log",
                   width = 9,
-                  uiOutput("ui")
-                ),
-                box(
-                  title = "xlms",
-                  width = 12,
                   verbatimTextOutput('test')
                 )
               )
@@ -55,296 +52,55 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output) {
+  
   LMB2017 = read.csv("LMB2017.csv")
   LMB2017 <- LMB2017[2:12]
-  
-  p <- reactiveValues()
-  observe(p$n <- input$ngames)
-  
-  teams <- c("cam","pue","agu","mxo","mva", "mty","oax","qui","tab","leo","vaq","dur","lar","yuc","slt","tij")
-  
-  output$ui <-renderUI({
-    if (is.null(input$ngames))
-      return()
-    
-    switch(input$ngames,
-           "1"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "2"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "3"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "4"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "5"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "6"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "7"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "8"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "9"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "10"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "11"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "12"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "13"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "14"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "15"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           }),
-           "16"  = lapply(1:p$n, function(i) {
-             column(3,
-                    h3(paste0('Game',i)),
-                    selectInput(paste0('away', i), paste0('Away', i),
-                                choices = teams),
-                    selectInput(paste0('home', i), paste0('Home', i),
-                                choices = teams),
-                    checkboxInput(paste0('chek',i), "chek", value = FALSE),
-                    textInput(paste0('obs',i),"Final"),
-                    hr()
-             )
-           })
-    )
-  })
-  
+
   output$LMB2017 <- DT::renderDataTable({
     DT::datatable(LMB2017)
   })
-  ## output$aways <- renderPrint({
-  #  
-  # dateX <- reactiveValues()
-  #  observe(dateX$mm <- substring(input$date,6,7))
-  #  observe(dateX$dd <- substring(input$date,9,10))
-  
-  ##res <- lapply(1:p$n, function(i) gsub(" ","",paste("http://www.milb.com/gdcross/components/game/aaa/year_2017/month_",
-  ##          dateX$mm,"/day_",dateX$dd,"/gid_2017_",dateX$mm,"_",dateX$dd,"_",
-  ##            input[[paste0('away', i)]],"aaa_",input[[paste0('home', i)]],"aaa_1/rawboxscore.xml")))
-  
-  #res <- lapply(1:p$n, function(i) gsub(" ","",paste("http://www.milb.com/gdcross/components/game/aaa/year_2017/month_",
-  #                substring(input$date,6,7),"/day_",substring(input$date,9,10),"/gid_2017_",substring(input$date,6,7),"_",
-  #                   substring(input$date,9,10),"_",input[[paste0('away', i)]],"aaa_",
-  #                      input[[paste0('home', i)]],"aaa_1/rawboxscore.xml")))
-  
-  # str(setNames(res, paste0('game', 1:p$n)))
-  #})
-  ##
-  
+ 
   observeEvent(input$do, {
     
     output$test <- renderPrint({
       
-      for(i in 1:p$n){
-        if(input[[paste0('chek',i)]] == TRUE){
-          a = 2
-        }else{
-          a = 1
-        }
-      } 
-      
-      res <- lapply(1:p$n, function(i) gsub(" ","",paste("https://gd2.mlb.com/components/game/aaa/year_2018/month_",
-                                                         substring(input$date,6,7),"/day_",substring(input$date,9,10),"/gid_2018_",substring(input$date,6,7),"_",
-                                                         substring(input$date,9,10),"_",input[[paste0('away', i)]],"aaa_",
-                                                         input[[paste0('home', i)]],"aaa_",a,"/rawboxscore.xml")))
-      eje <- list()
-      for(i in 1:p$n){
-        eje[[i]] <- paste(read_xml(as.character(res[i])),input[[paste0('obs', i)]],input[[paste0('chek', i)]])
+      lx <- gsub(" ","",paste("https://gd2.mlb.com/components/game/aaa/year_2018/month_",
+                              substring(input$date,6,7),"/day_",substring(input$date,9,10),
+                               "/master_scoreboard.xml"))
+      print(lx)
+      bx <- read_xml(lx)
+      res <- gameslist(bx)
+      print(res)
+      n <- length(res)
+      gamel <- list()
+      for(i in 1:n){
+        gamel[[i]] <- read_xml(as.character(res[[i]]))
       }
+      #print(gamel)
       
-      # Create 0-row data frame which will be used to store data
-      dat <- data.frame(x = numeric(0), y = numeric(0))
-      withProgress(message = 'Import XMLS', value = 0, {
-        # Number of times we'll go through the loop
-        n <- 10
-        
-        for (i in 1:n) {
-          # Each time through the loop, add another row of data. This is
-          # a stand-in for a long-running computation.
-          dat <- rbind(dat, data.frame(x = rnorm(1), y = rnorm(1)))
-          
-          # Increment the progress bar, and update the detail text.
-          incProgress(1/n, detail = paste("Doing part", i))
-          
-          # Pause for 0.1 seconds to simulate a long computation.
-          Sys.sleep(0.1)
-        }
-      })
-      ##g1 <- read_xml(as.character(res[1]))
-      ##as.character(res[1])
-      "XMLS importados correctamente"
+      #pio <- drive_download("~/Ejercicios R/shiny/lmb_statsapp/lmb_stats/LMB2018_bat.csv", overwrite = TRUE)
+      #puu <- read.csv(pio$name)
+      #write.csv(puu, file="puu.csv")
+      #drive_upload("puu.csv","puu.csv")
       
     })
   })
   
   observeEvent(input$games, {
     
-    res <- lapply(1:p$n, function(i) gsub(" ","",paste("http://www.milb.com/gdcross/components/game/aaa/year_2018/month_",
-                                                       substring(input$date,6,7),"/day_",substring(input$date,9,10),"/gid_2018_",substring(input$date,6,7),"_",
-                                                       substring(input$date,9,10),"_",input[[paste0('away', i)]],"aaa_",
-                                                       input[[paste0('home', i)]],"aaa_1/rawboxscore.xml")))
-    
+    lx <- gsub(" ","",paste("https://gd2.mlb.com/components/game/aaa/year_2018/month_",
+                            substring(input$date,6,7),"/day_",substring(input$date,9,10),
+                            "/master_scoreboard.xml"))
+    bx <- read_xml(lx)
+    res <- gameslist(bx)
+    n <- length(res)
     
     LMB2018 = read.csv("LMB2018.csv")
     LMB2018 <- LMB2018[2:16]
 
     game <- list()
-    for(i in 1:p$n){
-      game[[i]] <- bs(read_xml(as.character(res[i])))
+    for(i in 1:n){
+      game[[i]] <- bs(read_xml(as.character(res[[i]])))
       print(game[[i]])
       LMB2018 <- rbind(LMB2018, game[[i]])
       write.csv(LMB2018, file="LMB2018.csv")
@@ -429,7 +185,7 @@ server <- function(input, output) {
       
       assign(paste0(i,'x'),rbind(assign(paste0(i,'h'),rename(
         select(
-          filter(wls, HOME == i),
+          filter(LMB2018, HOME == i),
           HOME,hR,aR,HW,HL),
         TEAM = HOME,
         W = HW,
@@ -439,7 +195,7 @@ server <- function(input, output) {
       ),
       assign(paste0(i,'a'),rename(
         select(
-          filter(wls, AWAY == i),
+          filter(LMB2018, AWAY == i),
           AWAY,aR,hR,AW,AL),
         TEAM = AWAY,
         W = AW,
@@ -516,9 +272,29 @@ server <- function(input, output) {
     lmbstan_S <- lmbstan %>%
       filter(TEAM %in% c("cam","pue","mxo","oax","qui","tab","leo","yuc")) %>%
       arrange(-PCT)
+    
+    lmbstan_S$TEAM <- recode(lmbstan_S$TEAM,
+                             'cam' = 'Piratas de Campeche',
+                             'pue' = 'Pericos de Puebla',
+                             'mxo' = 'Diablos Rojos del Mexico',
+                             'oax' = 'Guerreros de Oaxaca',
+                             'qui' = 'Tigres de Quintana Roo',
+                             'tab' = 'Olmecas de Tabasco',
+                             'leo' = 'Bravos de Leon',
+                             'yuc' = 'Leones de Yucatan')
     lmbstan_N <- lmbstan %>%
       filter(TEAM %in% c("mty","mva","vaq","slt","dur","tij","lar","agu")) %>%
       arrange(-PCT)
+    
+    lmbstan_N$TEAM <- recode(lmbstan_N$TEAM,
+                             'mty' = 'Sultanes de Monterrey',
+                             'dur' = 'Generales de Durango',
+                             'tij' = 'Toros de Tijuana',
+                             'lar' = 'Tecolotes de 2 Laredos',
+                             'mva' = 'Acereros de Monclova',
+                             'slt' = 'Saraperos de Saltillo',
+                             'vaq' = 'Algodoneros Union Laguna',
+                             'agu' = 'Rieleros de Aguascalientes')
     
     write.csv(lmbstan, file="LMB2018_stan.csv")
     write.csv(lmbstan_S, file="LMB2018_stan_S.csv")
@@ -528,33 +304,23 @@ server <- function(input, output) {
   
   observeEvent(input$bat, {
 
-    res <- lapply(1:p$n, function(i) gsub(" ","",paste("http://www.milb.com/gdcross/components/game/aaa/year_2018/month_",
-                                                       substring(input$date,6,7),"/day_",substring(input$date,9,10),"/gid_2018_",substring(input$date,6,7),"_",
-                                                       substring(input$date,9,10),"_",input[[paste0('away', i)]],"aaa_",
-                                                       input[[paste0('home', i)]],"aaa_1/rawboxscore.xml")))
-  
-    bats <- list()
-    for(i in 1:p$n){
-      bats[[i]] <- py_st_bt(read_xml(as.character(res[i])))
-      #print(res[i])
-      #print(bats[[i]])
-      #LMB2018_bat <- rbind(LMB2018_bat,bats[[i]])
-      #LMB2018_bat_UP <- rbind(bats[[i]])
-      
-      #print(LMB2018_bat_UP)
-      #write.csv(LMB2018_bat, file="LMB2018_bat.csv")
-    }
-    #print(bats)
-    LMB2018_bat_UP <- do.call(rbind,bats)
-    LMB2018_bat_UP
+    lx <- gsub(" ","",paste("https://gd2.mlb.com/components/game/aaa/year_2018/month_",
+                            substring(input$date,6,7),"/day_",substring(input$date,9,10),
+                            "/master_scoreboard.xml"))
+    bx <- read_xml(lx)
+    res <- gameslist(bx)
+    n <- length(res)
     
+    bats <- list()
+    for(i in 1:n){
+      bats[[i]] <- py_st_bt(read_xml(as.character(res[[i]])))
+    }
+
+    LMB2018_bat_UP <- do.call(rbind,bats)
+    print(LMB2018_bat_UP)
     LMB2018_bat = read.csv("LMB2018_bat.csv")
     LMB2018_bat <- LMB2018_bat[2:15]
-    #print(LMB2018_bat)
-    #LMB2018_bat_UP = read.csv("LMB2018_bat_UP.csv")
-    #LMB2018_bat_UP <- LMB2018_bat_UP[2:15]
-    #LMB2018_bat_UP <- LMB2018_bat_UP
-    #print(LMB2018_bat_UP)
+    print(LMB2018_bat)
     
     LMB2018_bat <- LMB2018_bat %>%
       rbind(., LMB2018_bat_UP) %>%
@@ -582,47 +348,34 @@ server <- function(input, output) {
       filter(PA > 0)
     
     bat_bas <- mutate(bat_bas,
-                      AVG = formatC(round((H/AB),3),digits=3, format="f"),
-                      OBP = formatC(round(((H+BB+HBP)/(AB+BB+HBP+SF)),3),digits=3, format="f"),
-                      SLG = formatC(round((((1*H)+(2*D)+(3*Tr)+(4*HR))/AB),3),digits=3, format="f"),
-                      OPS = formatC(round((OBP+SLG),3),digits=3, format="f"))
+                      AVG = round((H/AB),3),
+                      OBP = round(((H+BB+HBP)/(AB+BB+HBP+SF)),3),
+                      SLG = round((((1*H)+(2*D)+(3*Tr)+(4*HR))/AB),3),
+                      OPS = round((OBP+SLG),3))
     
     write.csv(bat_bas, file="LMB2018_bat_bas.csv")
-    print(bat_bas)
+    print("Estadisticas de bateo completo")
     
   })
   
   observeEvent(input$pit, {
 
-    res <- lapply(1:p$n, function(i) gsub(" ","",paste("http://www.milb.com/gdcross/components/game/aaa/year_2018/month_",
-                                                       substring(input$date,6,7),"/day_",substring(input$date,9,10),"/gid_2018_",substring(input$date,6,7),"_",
-                                                       substring(input$date,9,10),"_",input[[paste0('away', i)]],"aaa_",
-                                                       input[[paste0('home', i)]],"aaa_1/rawboxscore.xml")))
+    lx <- gsub(" ","",paste("https://gd2.mlb.com/components/game/aaa/year_2018/month_",
+                            substring(input$date,6,7),"/day_",substring(input$date,9,10),
+                            "/master_scoreboard.xml"))
+    bx <- read_xml(lx)
+    res <- gameslist(bx)
+    n <- length(res)
     
     pits <- list()
-    for(i in 1:p$n){
-      pits[[i]] <- py_st_pt(read_xml(as.character(res[i])))
-      #print(res[i])
-      #print(bats[[i]])
-      #LMB2018_bat <- rbind(LMB2018_bat,bats[[i]])
-      #LMB2018_bat_UP <- rbind(bats[[i]])
-      
-      #print(LMB2018_bat_UP)
-      #write.csv(LMB2018_bat, file="LMB2018_bat.csv")
+    for(i in 1:n){
+      pits[[i]] <- py_st_pt(read_xml(as.character(res[[i]])))
     }
-    #print(bats)
+
     LMB2018_pit_UP <- do.call(rbind,pits)
     LMB2018_pit_UP
-    #print(LMB2018_pit_UP)
-    
     LMB2018_pit = read.csv("LMB2018_pit.csv")
     LMB2018_pit <- select(LMB2018_pit,Pitcher_Name:SV)
-    #print(LMB2018_pit)
-    #print(LMB2018_bat)
-    #LMB2018_bat_UP = read.csv("LMB2018_bat_UP.csv")
-    #LMB2018_bat_UP <- LMB2018_bat_UP[2:15]
-    #LMB2018_bat_UP <- LMB2018_bat_UP
-    #print(LMB2018_bat_UP)
     
     LMB2018_pit <- LMB2018_pit %>%
       rbind(.,LMB2018_pit_UP) %>%
@@ -645,10 +398,10 @@ server <- function(input, output) {
     pit_bas <- select(LMB2018_pit, Pitcher_Name, H:SV)
     
     pit_bas <- mutate(pit_bas,
-                      IP = formatC(round(as.numeric(paste0(trunc(LMB2018_pit$OUT/3),".",
-                                            LMB2018_pit$OUT%%3)),2),digits=1, format="f"),
-                      ERA = formatC(round(9*(ER/(LMB2018_pit$OUT/3)),2),digits=2, format="f"),
-                      WHIP = formatC(round((BB+H)/(LMB2018_pit$OUT/3),2),digits=2, format="f"))
+                      IP = round(as.numeric(paste0(trunc(LMB2018_pit$OUT/3),".",
+                                            LMB2018_pit$OUT%%3)),2),
+                      ERA = round(9*(ER/(LMB2018_pit$OUT/3)),2),
+                      WHIP = round((BB+H)/(LMB2018_pit$OUT/3),2))
     
     write.csv(pit_bas, file="LMB2018_pit_bas.csv")
     print(pit_bas)
@@ -656,14 +409,128 @@ server <- function(input, output) {
     pit_sab <- select(pit_bas, Pitcher_Name, SO:BB,IP:WHIP)
     
     pit_sab <- mutate(pit_sab,
-                      'BB/9' = formatC(round(9*(BB/LMB2018_pit$OUT/3),2),digits=2, format="f"),
-                      'K/9' = formatC(round(9*(SO/LMB2018_pit$OUT/3),2),digits=2, format="f"))
+                      'BB/9' = round(9*(BB/LMB2018_pit$OUT/3),2),
+                      'K/9' = round(9*(SO/LMB2018_pit$OUT/3),2))
     
     write.csv(pit_sab, file="LMB2018_pit_sab.csv")
-    print(pit_sab)
+    print("Estadisticas de pitcheo completo")
     
   })  
   
+  observeEvent(input$tb, {
+    
+    lx <- gsub(" ","",paste("https://gd2.mlb.com/components/game/aaa/year_2018/month_",
+                            substring(input$date,6,7),"/day_",substring(input$date,9,10),
+                            "/master_scoreboard.xml"))
+    bx <- read_xml(lx)
+    res <- gameslist(bx)
+    n <- length(res)
+    
+    bats <- list()
+    for(i in 1:n){
+      bats[[i]] <- tm_st_bt(read_xml(as.character(res[[i]])))
+    }
+    
+    LMB2018_TM_bat_UP <- do.call(rbind,bats)
+    print(LMB2018_TM_bat_UP)
+    LMB2018_TM_bat = read.csv("LMB2018_TM_bat.csv")
+    LMB2018_TM_bat <- LMB2018_TM_bat[2:15]
+    print(LMB2018_TM_bat)
+    
+    LMB2018_TM_bat <- LMB2018_TM_bat %>%
+      rbind(., LMB2018_TM_bat_UP) %>%
+      group_by(TEAM) %>%
+      summarise(AB = sum(AB), 
+                R = sum(R), 
+                H = sum(H),
+                D = sum(D),
+                Tr = sum(Tr),
+                HR = sum(HR),
+                RBI = sum(RBI),
+                BB = sum(BB),
+                SO = sum(SO),
+                HBP = sum(HBP),
+                SB = sum(SB),
+                SF = sum(SF),
+                SH = sum(SH))
+    
+    write.csv(LMB2018_TM_bat, file="LMB2018_TM_bat.csv")
+    
+    TM_bat_bas <- mutate(LMB2018_TM_bat,
+                      PA = AB+BB+SF+SH)
+    
+    TM_bat_bas <- TM_bat_bas %>% 
+      filter(PA > 0)
+    
+    TM_bat_bas <- mutate(TM_bat_bas,
+                      AVG = round((H/AB),3),
+                      OBP = round(((H+BB+HBP)/(AB+BB+HBP+SF)),3),
+                      SLG = round((((1*H)+(2*D)+(3*Tr)+(4*HR))/AB),3),
+                      OPS = round((OBP+SLG),3))
+    
+    write.csv(TM_bat_bas, file="LMB2018_TM_bat_bas.csv")
+    print("Estadisticas de bateo completo")
+    
+  })
+  
+  observeEvent(input$tp, {
+    
+    lx <- gsub(" ","",paste("https://gd2.mlb.com/components/game/aaa/year_2018/month_",
+                            substring(input$date,6,7),"/day_",substring(input$date,9,10),
+                            "/master_scoreboard.xml"))
+    bx <- read_xml(lx)
+    res <- gameslist(bx)
+    n <- length(res)
+    
+    pits <- list()
+    for(i in 1:n){
+      pits[[i]] <- tm_st_pt(read_xml(as.character(res[[i]])))
+    }
+    
+    LMB2018_TM_pit_UP <- do.call(rbind,pits)
+    LMB2018_TM_pit_UP
+    LMB2018_TM_pit = read.csv("LMB2018_TM_pit.csv")
+    LMB2018_TM_pit <- select(LMB2018_TM_pit,TEAM:SV)
+    
+    LMB2018_TM_pit <- LMB2018_TM_pit %>%
+      rbind(.,LMB2018_TM_pit_UP) %>%
+      group_by(TEAM) %>%
+      summarise(OUT = sum(OUT),
+                H = sum(H),
+                HR = sum(HR),
+                R = sum(R),
+                ER = sum(ER),
+                SO = sum(SO),
+                BB = sum(BB),
+                BK = sum(BK),
+                W = sum(W),
+                L = sum(L),
+                HLD = sum(HLD),
+                SV = sum(SV))
+    
+    write.csv(LMB2018_TM_pit, file="LMB2018_TM_pit.csv")
+    
+    TM_pit_bas <- select(LMB2018_TM_pit, TEAM, H:SV)
+    
+    TM_pit_bas <- mutate(TM_pit_bas,
+                      IP = round(as.numeric(paste0(trunc(LMB2018_TM_pit$OUT/3),".",
+                                                   LMB2018_TM_pit$OUT%%3)),2),
+                      ERA = round(9*(ER/(LMB2018_TM_pit$OUT/3)),2),
+                      WHIP = round((BB+H)/(LMB2018_TM_pit$OUT/3),2))
+    
+    write.csv(TM_pit_bas, file="LMB2018_TM_pit_bas.csv")
+    print(TM_pit_bas)
+    
+    TM_pit_sab <- select(TM_pit_bas, TEAM, SO:BB,IP:WHIP)
+    
+    TM_pit_sab <- mutate(TM_pit_sab,
+                      'BB/9' = round(9*(BB/LMB2018_TM_pit$OUT/3),2),
+                      'K/9' = round(9*(SO/LMB2018_TM_pit$OUT/3),2))
+    
+    write.csv(TM_pit_sab, file="LMB2018_TM_pit_sab.csv")
+    print("Estadisticas de pitcheo completo")
+    
+  })  
 }
 
 shinyApp(ui, server)
