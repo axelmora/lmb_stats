@@ -6,6 +6,7 @@ library(chron)
 library(DT)
 library(tidyverse)
 library(googledrive)
+library(googlesheets)
 
 ui <- dashboardPage(
   dashboardHeader(title = "Basic dashboard"),
