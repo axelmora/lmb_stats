@@ -77,18 +77,11 @@ server <- function(input, output) {
       for(i in 1:n){
         gamel[[i]] <- read_xml(as.character(res[[i]]))
       }
-      #print(gamel)
-      
-      #pio <- drive_download("~/Ejercicios R/shiny/lmb_statsapp/lmb_stats/LMB2018_bat.csv", overwrite = TRUE)
-      #puu <- read.csv(pio$name)
-      #write.csv(puu, file="puu.csv")
-      #drive_upload("puu.csv","puu.csv")
-      
     })
   })
   
   observeEvent(input$games, {
-    
+    #LMB 2018 master
     lx <- gsub(" ","",paste("https://gd2.mlb.com/components/game/aaa/year_2018/month_",
                             substring(input$date,6,7),"/day_",substring(input$date,9,10),
                             "/master_scoreboard.xml"))
@@ -111,6 +104,7 @@ server <- function(input, output) {
     gs_edit_cells(LMB2018.u,  input = LMB2018, anchor="A2", col_names=FALSE, trim=TRUE)
     print("LMB2018 actualizado con exito")
     
+    #Time and Attendance
     LMBatt_time.u <- gs_url("https://docs.google.com/spreadsheets/d/1ydh9_pmyQ_zBCnr_OeG-XgtO_PM8BB4S5bPijsLHrmU",
                           lookup = NULL, visibility = NULL, verbose = TRUE)
     
@@ -123,75 +117,11 @@ server <- function(input, output) {
     gs_edit_cells(LMBatt_time.u,  input = att_time, anchor="A2", col_names=FALSE, trim=TRUE)
     print("att_time actualizad con exito")
     
-    LMB2018$HOME <- tolower(LMB2018$HOME) 
-    LMB2018$AWAY <- tolower(LMB2018$AWAY)
-    
+    #Stadings
     teams <- c("cam","pue","agu","mxo","mva", "mty","oax","qui","tab","leo","vaq","dur","lar","yuc","slt","tij")
     
-    for(i in teams){
-      
-      assign(paste0(i,'x'),rbind(assign(paste0(i,'h'),rename(
-        select(
-          filter(LMB2018, HOME == i),
-          DATE, HOME,HW,HL),
-        TEAM = HOME,
-        W = HW,
-        L = HL)
-      ),
-      assign(paste0(i,'a'),rename(
-        select(
-          filter(LMB2018, AWAY == i),
-          DATE, AWAY,AW,AL),
-        TEAM = AWAY,
-        W = AW,
-        L = AL)
-      )
-      )
-      )
-    }
-    
-    vaqx <- vaqx[order(vaqx$DATE),]
-    tijx <- tijx[order(tijx$DATE),]
-    larx <- larx[order(larx$DATE),]
-    mxox <- mxox[order(mxox$DATE),]
-    mtyx <- mtyx[order(mtyx$DATE),]
-    mvax <- mvax[order(mvax$DATE),]
-    yucx <- yucx[order(yucx$DATE),]
-    quix <- quix[order(quix$DATE),]
-    agux <- agux[order(agux$DATE),]
-    durx <- durx[order(durx$DATE),]
-    leox <- leox[order(leox$DATE),]
-    oaxx <- oaxx[order(oaxx$DATE),]
-    sltx <- sltx[order(sltx$DATE),]
-    puex <- puex[order(puex$DATE),]
-    tabx <- tabx[order(tabx$DATE),]
-    camx <- camx[order(camx$DATE),]
-    
-    vaqx$vaq <- ((vaqx$W/(vaqx$W+vaqx$L)))
-    tijx$tij <- ((tijx$W/(tijx$W+tijx$L)))
-    larx$lar <- ((larx$W/(larx$W+larx$L)))
-    mxox$mxo <- ((mxox$W/(mxox$W+mxox$L)))
-    mtyx$mty <- ((mtyx$W/(mtyx$W+mtyx$L)))
-    mvax$mva <- ((mvax$W/(mvax$W+mvax$L)))
-    yucx$yuc <- ((yucx$W/(yucx$W+yucx$L)))
-    quix$qui <- ((quix$W/(quix$W+quix$L)))
-    agux$agu <- ((agux$W/(agux$W+agux$L)))
-    durx$dur <- ((durx$W/(durx$W+durx$L)))
-    leox$leo <- ((leox$W/(leox$W+leox$L)))
-    oaxx$oax <- ((oaxx$W/(oaxx$W+oaxx$L)))
-    sltx$slt <- ((sltx$W/(sltx$W+sltx$L)))
-    puex$pue <- ((puex$W/(puex$W+puex$L)))
-    tabx$tab <- ((tabx$W/(tabx$W+tabx$L)))
-    camx$cam <- ((camx$W/(camx$W+camx$L)))
-    
-    lmbts <- cbind(vaqx[1],vaqx[5],tijx[5],larx[5],mxox[5],mtyx[5],mvax[5],yucx[5],
-                   quix[5],agux[5],durx[5],leox[5],oaxx[5],sltx[5],puex[5],tabx[5],camx[5])
-    LMBts.u <- gs_url("https://docs.google.com/spreadsheets/d/1ZJiSAhYKqSDwAylfLKtgI0Uve58GF6OQyhWzxMXP0Dw",
-                    lookup = NULL, visibility = NULL, verbose = TRUE)
-    write.csv(lmbts, file="LMBts.csv")
-    gs_edit_cells(LMBts.u,  input=colnames(lmbts), byrow=TRUE, anchor="A1")
-    gs_edit_cells(LMBts.u,  input = lmbts, anchor="A2", col_names=FALSE, trim=TRUE)
-    print("lmbts actualizado con exito")
+    LMB2018$HOME <- tolower(LMB2018$HOME) 
+    LMB2018$AWAY <- tolower(LMB2018$AWAY)
     
     for(i in teams){
       
@@ -326,6 +256,90 @@ server <- function(input, output) {
     gs_edit_cells(LMB2018_stan_S.u,  input=colnames(lmbstan_N), byrow=TRUE, anchor="A1")
     gs_edit_cells(LMB2018_stan_S.u,  input = lmbstan_N, anchor="A2", col_names=FALSE, trim=TRUE)
     print("lmb2018_stan_S actualizado con exito")
+    
+    ##Time series
+    teams <- c("cam","pue","agu","mxo","mva", "mty","oax","qui","tab","leo","vaq","dur","lar","yuc","slt","tij")
+    
+    for(i in teams){
+      
+      assign(paste0(i,'x'),rbind(assign(paste0(i,'h'),rename(
+        select(
+          filter(LMB2018, HOME == i),
+          DATE, HOME,HW,HL),
+        TEAM = HOME,
+        W = HW,
+        L = HL)
+      ),
+      assign(paste0(i,'a'),rename(
+        select(
+          filter(LMB2018, AWAY == i),
+          DATE, AWAY,AW,AL),
+        TEAM = AWAY,
+        W = AW,
+        L = AL)
+      )
+      )
+      )
+    }
+    
+    vaqx <- vaqx[order(as.Date(vaqx$DATE, format = "%Y-%m-%d")),]
+    tijx <- tijx[order(as.Date(tijx$DATE, format = "%Y-%m-%d")),]
+    larx <- larx[order(as.Date(larx$DATE, format = "%Y-%m-%d")),]
+    mxox <- mxox[order(as.Date(mxox$DATE, format = "%Y-%m-%d")),]
+    mtyx <- mtyx[order(as.Date(mtyx$DATE, format = "%Y-%m-%d")),]
+    mvax <- mvax[order(as.Date(mvax$DATE, format = "%Y-%m-%d")),]
+    yucx <- yucx[order(as.Date(yucx$DATE, format = "%Y-%m-%d")),]
+    quix <- quix[order(as.Date(quix$DATE, format = "%Y-%m-%d")),]
+    agux <- agux[order(as.Date(agux$DATE, format = "%Y-%m-%d")),]
+    durx <- durx[order(as.Date(durx$DATE, format = "%Y-%m-%d")),]
+    leox <- leox[order(as.Date(leox$DATE, format = "%Y-%m-%d")),]
+    oaxx <- oaxx[order(as.Date(oaxx$DATE, format = "%Y-%m-%d")),]
+    sltx <- sltx[order(as.Date(sltx$DATE, format = "%Y-%m-%d")),]
+    puex <- puex[order(as.Date(puex$DATE, format = "%Y-%m-%d")),]
+    tabx <- tabx[order(as.Date(tabx$DATE, format = "%Y-%m-%d")),]
+    camx <- camx[order(as.Date(camx$DATE, format = "%Y-%m-%d")),]
+    
+    vaqx$vaq <- ((vaqx$W/(vaqx$W+vaqx$L)))
+    tijx$tij <- ((tijx$W/(tijx$W+tijx$L)))
+    larx$lar <- ((larx$W/(larx$W+larx$L)))
+    mxox$mxo <- ((mxox$W/(mxox$W+mxox$L)))
+    mtyx$mty <- ((mtyx$W/(mtyx$W+mtyx$L)))
+    mvax$mva <- ((mvax$W/(mvax$W+mvax$L)))
+    yucx$yuc <- ((yucx$W/(yucx$W+yucx$L)))
+    quix$qui <- ((quix$W/(quix$W+quix$L)))
+    agux$agu <- ((agux$W/(agux$W+agux$L)))
+    durx$dur <- ((durx$W/(durx$W+durx$L)))
+    leox$leo <- ((leox$W/(leox$W+leox$L)))
+    oaxx$oax <- ((oaxx$W/(oaxx$W+oaxx$L)))
+    sltx$slt <- ((sltx$W/(sltx$W+sltx$L)))
+    puex$pue <- ((puex$W/(puex$W+puex$L)))
+    tabx$tab <- ((tabx$W/(tabx$W+tabx$L)))
+    camx$cam <- ((camx$W/(camx$W+camx$L)))
+    
+    #lmbts <- cbind(vaqx[1],vaqx[5],tijx[5],larx[5],mxox[5],mtyx[5],mvax[5],yucx[5],
+    #               quix[5],agux[5],durx[5],leox[5],oaxx[5],sltx[5],puex[5],tabx[5],camx[5])
+    lmbts <-  
+      merge(
+        merge(
+          merge(merge(vaqx[c(1,5)],tijx[c(1,5)],by = "DATE", all = T),
+                merge(larx[c(1,5)],mxox[c(1,5)],by = "DATE", all = T),by = "DATE", all = T),
+          merge(merge(mtyx[c(1,5)],mvax[c(1,5)],by = "DATE", all = T),
+                merge(yucx[c(1,5)],quix[c(1,5)],by = "DATE", all = T),by = "DATE", all = T),
+          by = "DATE", all = T),
+        merge(
+          merge(merge(leox[c(1,5)],oaxx[c(1,5)],by = "DATE", all = T),
+                merge(agux[c(1,5)],durx[c(1,5)],by = "DATE", all = T),by = "DATE", all = T),
+          merge(merge(sltx[c(1,5)],puex[c(1,5)],by = "DATE", all = T),
+                merge(tabx[c(1,5)],camx[c(1,5)],by = "DATE", all = T),by = "DATE", all = T),
+          by = "DATE", all = T),
+        by = "DATE", all = T)
+    lmbts <- distinct(lmbts)
+    LMBts.u <- gs_url("https://docs.google.com/spreadsheets/d/1ZJiSAhYKqSDwAylfLKtgI0Uve58GF6OQyhWzxMXP0Dw",
+                      lookup = NULL, visibility = NULL, verbose = TRUE)
+    write.csv(lmbts, file="LMBts.csv")
+    gs_edit_cells(LMBts.u,  input=colnames(lmbts), byrow=TRUE, anchor="A1")
+    gs_edit_cells(LMBts.u,  input = lmbts, anchor="A2", col_names=FALSE, trim=TRUE)
+    print("lmbts actualizado con exito")
   })
   
   observeEvent(input$bat, {
@@ -379,7 +393,7 @@ server <- function(input, output) {
     bat_bas <- mutate(bat_bas,
                       AVG = round((H/AB),3),
                       OBP = round(((H+BB+HBP)/(AB+BB+HBP+SF)),3),
-                      SLG = round((((1*H)+(2*D)+(3*Tr)+(4*HR))/AB),3),
+                      SLG = round((((1*(H-D-Tr-HR))+(2*D)+(3*Tr)+(4*HR))/AB),3),
                       OPS = round((OBP+SLG),3))
     
     LMB2018_bat_bas.u <- gs_url("https://docs.google.com/spreadsheets/d/1_KDrv4koh6syrHusd0QkxsWdMm1XN_9sgrv45KWL0Mc",
@@ -512,7 +526,7 @@ server <- function(input, output) {
     TM_bat_bas <- mutate(TM_bat_bas,
                       AVG = round((H/AB),3),
                       OBP = round(((H+BB+HBP)/(AB+BB+HBP+SF)),3),
-                      SLG = round((((1*H)+(2*D)+(3*Tr)+(4*HR))/AB),3),
+                      SLG = round((((1*(H-D-Tr-HR))+(2*D)+(3*Tr)+(4*HR))/AB),3),
                       OPS = round((OBP+SLG),3))
     
     LMB2018_TM_bat_bas.u <- gs_url("https://docs.google.com/spreadsheets/d/1qxGJReA4GVEPcgErrmpc-bn73ZpIrVD9e78kYp_rBps",
